@@ -9,12 +9,12 @@ import re
 import sys
 
 data = {
-    'red':       colorama.Fore.RED,
-    'green':     colorama.Fore.GREEN,
-    'blue':      colorama.Fore.BLUE + colorama.Style.NORMAL,
-    'lightblue': colorama.Fore.BLUE + colorama.Style.BRIGHT,
-    'white':     colorama.Fore.WHITE,
-    'n':         '\n' + colorama.Style.RESET_ALL}
+    'red':       '\001' + colorama.Fore.RED + '\002',
+    'green':     '\001' + colorama.Fore.GREEN + '\002',
+    'blue':      '\001' + colorama.Fore.BLUE + colorama.Style.NORMAL + '\002',
+    'lightblue': '\001' + colorama.Fore.BLUE + colorama.Style.BRIGHT + '\002',
+    'white':     '\001' + colorama.Fore.WHITE + '\002',
+    'n':         '\n' + '\001' + colorama.Style.RESET_ALL + '\002'}
 
 def replace_format_string(s):
     wanted_keys = set(re.findall('{([a-z-]*)}', s))
@@ -23,22 +23,22 @@ def replace_format_string(s):
             try:
                 # ✔
                 repo = git.Repo(os.getcwd(), search_parent_directories=True)
-                status = colorama.Back.WHITE + colorama.Style.NORMAL + colorama.Fore.BLACK + '▏ '
+                status = '\001' + colorama.Back.WHITE + colorama.Style.NORMAL + colorama.Fore.BLACK + '\002' + '▏ '
                 status += os.path.basename(repo.working_dir) + ' ▕'
-                status += colorama.Back.WHITE + colorama.Style.NORMAL
-                status += colorama.Fore.BLACK + '  '
-                status += colorama.Fore.RED   + '?' if repo.is_dirty(index=False, working_tree=False, untracked_files=True,  submodules=False) else colorama.Fore.BLACK + ' ' # ?
-                status += colorama.Fore.BLACK + ' '
-                status += colorama.Fore.RED   + '⏺' if repo.is_dirty(index=False, working_tree=True,  untracked_files=False, submodules=False) else colorama.Fore.BLACK + ' ' # ⏺ 🖉
-                status += colorama.Fore.BLACK + ' '
-                status += colorama.Fore.BLACK + '🞣' if repo.is_dirty(index=True,  working_tree=False, untracked_files=False, submodules=False) else colorama.Fore.BLACK + ' '
-                status += colorama.Fore.BLACK + '  '
+                status += '\001' + colorama.Back.WHITE + colorama.Style.NORMAL + '\002'
+                status += '\001' + colorama.Fore.BLACK + '\002' + '  '
+                status += '\001' + colorama.Fore.RED   + '\002' + '?' if repo.is_dirty(index=False, working_tree=False, untracked_files=True,  submodules=False) else '\001' + colorama.Fore.BLACK + '\002' + ' ' # ?
+                status += '\001' + colorama.Fore.BLACK + '\002' + ' '
+                status += '\001' + colorama.Fore.RED   + '\002' + '⏺' if repo.is_dirty(index=False, working_tree=True,  untracked_files=False, submodules=False) else '\001' + colorama.Fore.BLACK + '\002' + ' ' # ⏺ 🖉
+                status += '\001' + colorama.Fore.BLACK + '\002' + ' '
+                status += '\001' + colorama.Fore.BLACK + '\002' + '🞣' if repo.is_dirty(index=True,  working_tree=False, untracked_files=False, submodules=False) else '\001' + colorama.Fore.BLACK + '\002' + ' '
+                status += '\001' + colorama.Fore.BLACK + '\002' + '  '
                 status += '▕'
                 dirty = repo.is_dirty(index=True, working_tree=True,  untracked_files=True, submodules=False)
                 if dirty:
-                    status += colorama.Style.BRIGHT + colorama.Fore.WHITE + colorama.Back.RED
+                    status += '\001' + colorama.Style.BRIGHT + colorama.Fore.WHITE + colorama.Back.RED + '\002'
                 else:
-                    status += colorama.Style.BRIGHT + colorama.Fore.WHITE + colorama.Back.GREEN
+                    status += '\001' + colorama.Style.BRIGHT + colorama.Fore.WHITE + colorama.Back.GREEN + '\002'
                 status += '  '
                 if repo.head.is_detached:
                     status += '(detached)'
@@ -61,7 +61,7 @@ def replace_format_string(s):
                     else:
                         status += ')'
 
-                status += '  ' + colorama.Style.RESET_ALL
+                status += '  ' + '\001' + colorama.Style.RESET_ALL + '\002'
 
                 data['git'] = status
             except TypeError as err:
@@ -73,7 +73,7 @@ def replace_format_string(s):
             data['pwd'] = re.sub('^' + os.path.expanduser('~'), '~', pwd)
         else:
             data[key] = key
-    return s.replace('\\n', '{n}').format(**data) + colorama.Style.RESET_ALL
+    return s.replace('\\n', '{n}').format(**data) + '\001' + colorama.Style.RESET_ALL + '\002'
 
 def main():
     colorama.init(strip=False)
