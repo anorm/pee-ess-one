@@ -49,9 +49,9 @@ def replace_format_string(s):
                     if tracking_branch:
                         status += ' 🗘 '
                         status += tracking_branch.remote_name.encode('utf-8')
-                        status += ')'
                         if tracking_branch.remote_head != repo.active_branch.name:
                             status += '/' + tracking_branch.remote_head.encode('utf-8')
+                        status += ')'
                         behind = sum(1 for c in repo.iter_commits(u'{}..{}/{}'.format(repo.active_branch, tracking_branch.remote_name, tracking_branch.remote_head)))
                         ahead  = sum(1 for c in repo.iter_commits(u'{}/{}..{}'.format(tracking_branch.remote_name, tracking_branch.remote_head, repo.active_branch)))
                         if ahead:
